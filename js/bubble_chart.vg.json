@@ -2,7 +2,7 @@
   "$schema": "https://vega.github.io/schema/vega/v5.json",
   "background": "white",
   "padding": 5,
-  "width":6500,
+  "width":650,
   "height": 500,
   "title": {"text": "COVID-19 Cases by the 15th of Oct", "frame": "group"},
   "style": "cell",
