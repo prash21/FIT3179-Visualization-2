@@ -17,7 +17,7 @@
     },
     {
       "name": "source_1",
-      "url": "https://raw.githubusercontent.com/prash21/FIT3179-W9-HW/main/data/covidDataset.csv",
+      "url": "https://raw.githubusercontent.com/prash21/FIT3179-Visualization-2/main/data/Total_covid_dataset.csv",
       "format": {"type": "csv", "delimiter": ","},
       "transform": [
         {
