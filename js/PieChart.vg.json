@@ -1,0 +1,207 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Total Media Hits",
+  "background": "white",
+  "padding": 5,
+  "width": 500,
+  "height": 300,
+  "title": {"text": "Pandemic Media Hits", "offset": 15, "frame": "group"},
+  "style": "cell",
+  "encode": {"update": {"stroke": {"value": null}}},
+  "data": [
+    {"name": "highlight_continents_store"},
+    {
+      "name": "source_0",
+      "url": "https://raw.githubusercontent.com/prash21/FIT3179-Visualization-2/main/data/CovidMediaMentions.csv",
+      "format": {"type": "csv", "delimiter": ","},
+      "transform": [
+        {
+          "type": "stack",
+          "groupby": [],
+          "field": "TotalMediaHits",
+          "sort": {"field": ["Pandemic"], "order": ["ascending"]},
+          "as": ["TotalMediaHits_start", "TotalMediaHits_end"],
+          "offset": "zero"
+        },
+        {
+          "type": "filter",
+          "expr": "isValid(datum[\"TotalMediaHits\"]) && isFinite(+datum[\"TotalMediaHits\"])"
+        }
+      ]
+    }
+  ],
+  "signals": [
+    {
+      "name": "unit",
+      "value": {},
+      "on": [
+        {"events": "mousemove", "update": "isTuple(group()) ? group() : unit"}
+      ]
+    },
+    {
+      "name": "highlight_continents_Pandemic_legend",
+      "value": null,
+      "on": [
+        {
+          "events": [
+            {
+              "source": "view",
+              "type": "click",
+              "markname": "Pandemic_legend_symbols"
+            },
+            {
+              "source": "view",
+              "type": "click",
+              "markname": "Pandemic_legend_labels"
+            },
+            {
+              "source": "view",
+              "type": "click",
+              "markname": "Pandemic_legend_entries"
+            }
+          ],
+          "update": "datum.value || item().items[0].items[0].datum.value",
+          "force": true
+        },
+        {
+          "events": [{"source": "view", "type": "click"}],
+          "update": "!event.item || !datum ? null : highlight_continents_Pandemic_legend",
+          "force": true
+        }
+      ]
+    },
+    {
+      "name": "highlight_continents",
+      "update": "vlSelectionResolve(\"highlight_continents_store\", \"union\", true)"
+    },
+    {
+      "name": "highlight_continents_tuple",
+      "update": "highlight_continents_Pandemic_legend !== null ? {fields: highlight_continents_tuple_fields, values: [highlight_continents_Pandemic_legend]} : null"
+    },
+    {
+      "name": "highlight_continents_tuple_fields",
+      "value": [{"type": "E", "field": "Pandemic"}]
+    },
+    {
+      "name": "highlight_continents_toggle",
+      "value": false,
+      "on": [
+        {
+          "events": {"merge": [{"source": "view", "type": "click"}]},
+          "update": "event.shiftKey"
+        }
+      ]
+    },
+    {
+      "name": "highlight_continents_modify",
+      "on": [
+        {
+          "events": {"signal": "highlight_continents_tuple"},
+          "update": "modify(\"highlight_continents_store\", highlight_continents_toggle ? null : highlight_continents_tuple, highlight_continents_toggle ? null : true, highlight_continents_toggle ? highlight_continents_tuple : null)"
+        }
+      ]
+    }
+  ],
+  "marks": [
+    {
+      "name": "marks",
+      "type": "arc",
+      "style": ["arc"],
+      "interactive": true,
+      "from": {"data": "source_0"},
+      "encode": {
+        "update": {
+          "innerRadius": {"value": 60},
+          "fill": {"scale": "color", "field": "Pandemic"},
+          "opacity": [
+            {
+              "test": "!(length(data(\"highlight_continents_store\"))) || (vlSelectionTest(\"highlight_continents_store\", datum))",
+              "value": 1
+            },
+            {"value": 0.3}
+          ],
+          "tooltip": {
+            "signal": "{\"Pandemic\": isValid(datum[\"Pandemic\"]) ? datum[\"Pandemic\"] : \"\"+datum[\"Pandemic\"], \"Total Media Hits (Million)\": isValid(datum[\"TotalMediaHits\"]) ? datum[\"TotalMediaHits\"] : \"\"+datum[\"TotalMediaHits\"]}"
+          },
+          "description": {
+            "signal": "\"TotalMediaHits: \" + (format(datum[\"TotalMediaHits\"], \"\")) + \"; Pandemic: \" + (isValid(datum[\"Pandemic\"]) ? datum[\"Pandemic\"] : \"\"+datum[\"Pandemic\"]) + \"; Total Media Hits (Million): \" + (isValid(datum[\"TotalMediaHits\"]) ? datum[\"TotalMediaHits\"] : \"\"+datum[\"TotalMediaHits\"])"
+          },
+          "x": {"signal": "width", "mult": 0.5},
+          "y": {"signal": "height", "mult": 0.5},
+          "outerRadius": {"signal": "min(width,height)/2"},
+          "startAngle": {"scale": "theta", "field": "TotalMediaHits_end"},
+          "endAngle": {"scale": "theta", "field": "TotalMediaHits_start"}
+        }
+      }
+    }
+  ],
+  "scales": [
+    {
+      "name": "theta",
+      "type": "linear",
+      "domain": {
+        "data": "source_0",
+        "fields": ["TotalMediaHits_start", "TotalMediaHits_end"]
+      },
+      "range": [0, 6.283185307179586],
+      "zero": true
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": {"data": "source_0", "field": "Pandemic", "sort": true},
+      "range": {"scheme": "category10"}
+    }
+  ],
+  "legends": [
+    {
+      "fill": "color",
+      "symbolType": "circle",
+      "title": "Pandemic",
+      "encode": {
+        "labels": {
+          "name": "Pandemic_legend_labels",
+          "interactive": true,
+          "update": {
+            "opacity": [
+              {
+                "test": "(!length(data(\"highlight_continents_store\")) || (highlight_continents[\"Pandemic\"] && indexof(highlight_continents[\"Pandemic\"], datum.value) >= 0))",
+                "value": 1
+              },
+              {"value": 0.35}
+            ]
+          }
+        },
+        "symbols": {
+          "name": "Pandemic_legend_symbols",
+          "interactive": true,
+          "update": {
+            "opacity": [
+              {
+                "test": "(!length(data(\"highlight_continents_store\")) || (highlight_continents[\"Pandemic\"] && indexof(highlight_continents[\"Pandemic\"], datum.value) >= 0))",
+                "value": 1
+              },
+              {"value": 0.35}
+            ]
+          }
+        },
+        "entries": {
+          "name": "Pandemic_legend_entries",
+          "interactive": true,
+          "update": {"fill": {"value": "transparent"}}
+        }
+      }
+    }
+  ],
+  "config": {
+    "mark": {"font": "Montserrat"},
+    "axis": {"labelFont": "Montserrat", "titleFont": "Montserrat"},
+    "legend": {
+      "labelFont": "Montserrat",
+      "titleFont": "Montserrat",
+      "titleFontSize": 13
+    },
+    "style": {"group-title": {"font": "Montserrat", "fontSize": 16}},
+    "title": {"subtitleFont": "Montserrat"}
+  }
+}
