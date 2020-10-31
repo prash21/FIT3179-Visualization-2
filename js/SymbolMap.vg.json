@@ -1,0 +1,502 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Global Covid-19 Deaths and Cases",
+  "background": "#f2f2f2",
+  "padding": 5,
+  "width": 800,
+  "height": 500,
+  "title": {"text": "Global Covid-19 Deaths and Cases", "frame": "group"},
+  "style": "cell",
+  "data": [
+    {
+      "name": "source_0",
+      "url": "https://raw.githubusercontent.com/prash21/FIT3179-Visualization-2/main/js/ne_110m_admin_0_countries.json",
+      "format": {"type": "topojson", "feature": "ne_110m_admin_0_countries"}
+    },
+    {
+      "name": "source_1",
+      "url": "https://raw.githubusercontent.com/prash21/FIT3179-Visualization-2/main/js/ne_110m_coastline.json",
+      "format": {"type": "topojson", "feature": "ne_110m_coastline"}
+    },
+    {
+      "name": "source_2",
+      "url": "https://raw.githubusercontent.com/prash21/FIT3179-Visualization-2/main/js/ne_110m_rivers_lake_centerlines.json",
+      "format": {
+        "type": "topojson",
+        "feature": "ne_110m_rivers_lake_centerlines"
+      }
+    },
+    {
+      "name": "source_3",
+      "url": "https://raw.githubusercontent.com/prash21/FIT3179-Visualization-2/main/js/ne_110m_glaciated_areas.json",
+      "format": {"type": "topojson", "feature": "ne_110m_glaciated_areas"}
+    },
+    {
+      "name": "source_4",
+      "url": "https://raw.githubusercontent.com/prash21/FIT3179-Visualization-2/main/data/CovidDataset.csv",
+      "format": {"type": "csv", "delimiter": ","},
+      "transform": [
+        {
+          "type": "formula",
+          "expr": "datum.total_deaths/datum.population * 10000",
+          "as": "Confirmed Deaths per 10,000 population"
+        },
+        {
+          "type": "formula",
+          "expr": "datum.total_cases/datum.population * 10000",
+          "as": "Confirmed Cases per 10,000 population"
+        },
+        {
+          "type": "filter",
+          "expr": "datum.total_cases/datum.population * 10000 > total_cases_range"
+        },
+        {
+          "type": "filter",
+          "expr": "datum.total_deaths/datum.population * 10000 > total_deaths_range"
+        }
+      ]
+    },
+    {
+      "name": "data_0",
+      "source": "source_4",
+      "transform": [
+        {
+          "type": "geojson",
+          "fields": ["longitude", "latitude"],
+          "signal": "layer_4_layer_0_geojson_0"
+        },
+        {
+          "type": "geopoint",
+          "projection": "projection",
+          "fields": ["longitude", "latitude"],
+          "as": ["layer_4_layer_0_x", "layer_4_layer_0_y"]
+        }
+      ]
+    },
+    {
+      "name": "data_1",
+      "source": "source_4",
+      "transform": [
+        {
+          "type": "geojson",
+          "fields": ["longitude", "latitude"],
+          "signal": "layer_4_layer_1_geojson_0"
+        },
+        {
+          "type": "geopoint",
+          "projection": "projection",
+          "fields": ["longitude", "latitude"],
+          "as": ["layer_4_layer_1_x", "layer_4_layer_1_y"]
+        }
+      ]
+    },
+    {
+      "name": "data_2",
+      "source": "source_4",
+      "transform": [
+        {
+          "type": "geojson",
+          "fields": ["longitude", "latitude"],
+          "signal": "layer_4_layer_2_geojson_0"
+        },
+        {
+          "type": "geopoint",
+          "projection": "projection",
+          "fields": ["longitude", "latitude"],
+          "as": ["layer_4_layer_2_x", "layer_4_layer_2_y"]
+        }
+      ]
+    },
+    {
+      "name": "data_3",
+      "source": "source_4",
+      "transform": [
+        {
+          "type": "geojson",
+          "fields": ["longitude", "latitude"],
+          "signal": "layer_4_layer_3_geojson_0"
+        },
+        {
+          "type": "geopoint",
+          "projection": "projection",
+          "fields": ["longitude", "latitude"],
+          "as": ["layer_4_layer_3_x", "layer_4_layer_3_y"]
+        },
+        {
+          "type": "filter",
+          "expr": "isValid(datum[\"Confirmed Cases per 10,000 population\"]) && isFinite(+datum[\"Confirmed Cases per 10,000 population\"]) && isValid(datum[\"Confirmed Deaths per 10,000 population\"]) && isFinite(+datum[\"Confirmed Deaths per 10,000 population\"])"
+        }
+      ]
+    },
+    {
+      "name": "data_4",
+      "source": "source_4",
+      "transform": [
+        {
+          "type": "geojson",
+          "fields": ["longitude", "latitude"],
+          "signal": "layer_4_layer_4_geojson_0"
+        },
+        {
+          "type": "geopoint",
+          "projection": "projection",
+          "fields": ["longitude", "latitude"],
+          "as": ["layer_4_layer_4_x", "layer_4_layer_4_y"]
+        }
+      ]
+    },
+    {
+      "name": "data_5",
+      "source": "source_4",
+      "transform": [
+        {
+          "type": "geojson",
+          "fields": ["longitude", "latitude"],
+          "signal": "layer_4_layer_5_geojson_0"
+        },
+        {
+          "type": "geopoint",
+          "projection": "projection",
+          "fields": ["longitude", "latitude"],
+          "as": ["layer_4_layer_5_x", "layer_4_layer_5_y"]
+        }
+      ]
+    },
+    {
+      "name": "data_6",
+      "source": "source_4",
+      "transform": [
+        {
+          "type": "geojson",
+          "fields": ["longitude", "latitude"],
+          "signal": "layer_4_layer_6_geojson_0"
+        },
+        {
+          "type": "geopoint",
+          "projection": "projection",
+          "fields": ["longitude", "latitude"],
+          "as": ["layer_4_layer_6_x", "layer_4_layer_6_y"]
+        }
+      ]
+    }
+  ],
+  "projections": [
+    {
+      "name": "projection",
+      "size": {"signal": "[width, height]"},
+      "fit": {
+        "signal": "[data('source_0'), data('source_1'), data('source_2'), data('source_3'), layer_4_layer_0_geojson_0, layer_4_layer_1_geojson_0, layer_4_layer_2_geojson_0, layer_4_layer_3_geojson_0, layer_4_layer_4_geojson_0, layer_4_layer_5_geojson_0, layer_4_layer_6_geojson_0]"
+      },
+      "type": "equalEarth"
+    }
+  ],
+  "signals": [
+    {
+      "name": "total_cases_range",
+      "value": 0,
+      "bind": {
+        "input": "range",
+        "min": 0,
+        "max": 300,
+        "step": 10,
+        "name": "Min. Cases: "
+      }
+    },
+    {
+      "name": "total_deaths_range",
+      "value": 0,
+      "bind": {
+        "input": "range",
+        "min": 0,
+        "max": 12,
+        "step": 0.5,
+        "name": "Min. Deaths: "
+      }
+    }
+  ],
+  "marks": [
+    {
+      "name": "layer_0_marks",
+      "type": "shape",
+      "style": ["geoshape"],
+      "from": {"data": "source_0"},
+      "encode": {
+        "update": {
+          "fill": {"value": "lightgray"},
+          "stroke": {"value": "white"},
+          "ariaRoleDescription": {"value": "geoshape"}
+        }
+      },
+      "transform": [{"type": "geoshape", "projection": "projection"}]
+    },
+    {
+      "name": "layer_1_marks",
+      "type": "shape",
+      "style": ["geoshape"],
+      "from": {"data": "source_1"},
+      "encode": {
+        "update": {
+          "fill": {"value": "null"},
+          "stroke": {"value": "lightsteelblue"},
+          "ariaRoleDescription": {"value": "geoshape"}
+        }
+      },
+      "transform": [{"type": "geoshape", "projection": "projection"}]
+    },
+    {
+      "name": "layer_2_marks",
+      "type": "shape",
+      "style": ["geoshape"],
+      "from": {"data": "source_2"},
+      "encode": {
+        "update": {
+          "fill": {"value": "mull"},
+          "stroke": {"value": "skyblue"},
+          "ariaRoleDescription": {"value": "geoshape"}
+        }
+      },
+      "transform": [{"type": "geoshape", "projection": "projection"}]
+    },
+    {
+      "name": "layer_3_marks",
+      "type": "shape",
+      "style": ["geoshape"],
+      "from": {"data": "source_3"},
+      "encode": {
+        "update": {
+          "fill": {"value": "#B0B0B0"},
+          "stroke": {"value": "skyblue"},
+          "ariaRoleDescription": {"value": "geoshape"}
+        }
+      },
+      "transform": [{"type": "geoshape", "projection": "projection"}]
+    },
+    {
+      "name": "layer_4_layer_0_marks",
+      "type": "text",
+      "style": ["text"],
+      "from": {"data": "data_0"},
+      "encode": {
+        "update": {
+          "align": {"value": "right"},
+          "baseline": {"value": "middle"},
+          "text": {"value": ["Peru has a very", " high death rate!"]},
+          "dx": {"value": -40},
+          "dy": {"value": 5},
+          "fill": {"value": "black"},
+          "opacity": [
+            {"test": "datum['country'] == 'Peru' ", "value": 1},
+            {"value": 0}
+          ],
+          "tooltip": {
+            "signal": "{\"Country\": isValid(datum[\"country\"]) ? datum[\"country\"] : \"\"+datum[\"country\"], \"Total Cases\": format(datum[\"total_cases\"], \",\"), \"Total Deaths\": format(datum[\"total_deaths\"], \",\"), \"Confirmed Cases per 10,000 population\": format(datum[\"Confirmed Cases per 10,000 population\"], \".2f\"), \"Confirmed Deaths per 10,000 population\": format(datum[\"Confirmed Deaths per 10,000 population\"], \".2f\")}"
+          },
+          "description": {
+            "signal": "\"longitude: \" + (format(datum[\"longitude\"], \"\")) + \"; latitude: \" + (format(datum[\"latitude\"], \"\")) + \"; Country: \" + (isValid(datum[\"country\"]) ? datum[\"country\"] : \"\"+datum[\"country\"]) + \"; Total Cases: \" + (format(datum[\"total_cases\"], \",\")) + \"; Total Deaths: \" + (format(datum[\"total_deaths\"], \",\")) + \"; Confirmed Cases per 10,000 population: \" + (format(datum[\"Confirmed Cases per 10,000 population\"], \".2f\")) + \"; Confirmed Deaths per 10,000 population: \" + (format(datum[\"Confirmed Deaths per 10,000 population\"], \".2f\"))"
+          },
+          "x": {"field": "layer_4_layer_0_x"},
+          "y": {"field": "layer_4_layer_0_y"}
+        }
+      }
+    },
+    {
+      "name": "layer_4_layer_1_marks",
+      "type": "text",
+      "style": ["text"],
+      "from": {"data": "data_1"},
+      "encode": {
+        "update": {
+          "align": {"value": "left"},
+          "baseline": {"value": "middle"},
+          "text": {
+            "value": ["Philippines has one", "of the lowest death", "rates!"]
+          },
+          "dx": {"value": 20},
+          "fill": {"value": "black"},
+          "opacity": [
+            {"test": "datum['country'] == 'Philippines'", "value": 1},
+            {"value": 0}
+          ],
+          "tooltip": {
+            "signal": "{\"Country\": isValid(datum[\"country\"]) ? datum[\"country\"] : \"\"+datum[\"country\"], \"Total Cases\": format(datum[\"total_cases\"], \",\"), \"Total Deaths\": format(datum[\"total_deaths\"], \",\"), \"Confirmed Cases per 10,000 population\": format(datum[\"Confirmed Cases per 10,000 population\"], \".2f\"), \"Confirmed Deaths per 10,000 population\": format(datum[\"Confirmed Deaths per 10,000 population\"], \".2f\")}"
+          },
+          "description": {
+            "signal": "\"longitude: \" + (format(datum[\"longitude\"], \"\")) + \"; latitude: \" + (format(datum[\"latitude\"], \"\")) + \"; Country: \" + (isValid(datum[\"country\"]) ? datum[\"country\"] : \"\"+datum[\"country\"]) + \"; Total Cases: \" + (format(datum[\"total_cases\"], \",\")) + \"; Total Deaths: \" + (format(datum[\"total_deaths\"], \",\")) + \"; Confirmed Cases per 10,000 population: \" + (format(datum[\"Confirmed Cases per 10,000 population\"], \".2f\")) + \"; Confirmed Deaths per 10,000 population: \" + (format(datum[\"Confirmed Deaths per 10,000 population\"], \".2f\"))"
+          },
+          "x": {"field": "layer_4_layer_1_x"},
+          "y": {"field": "layer_4_layer_1_y"}
+        }
+      }
+    },
+    {
+      "name": "layer_4_layer_2_marks",
+      "type": "text",
+      "style": ["text"],
+      "from": {"data": "data_2"},
+      "encode": {
+        "update": {
+          "align": {"value": "left"},
+          "baseline": {"value": "middle"},
+          "text": {
+            "value": [
+              "South Africa has 18,968",
+              "deaths, and over 3 deaths",
+              "per 10,000 people!"
+            ]
+          },
+          "dx": {"value": 25},
+          "dy": {"value": 10},
+          "fill": {"value": "black"},
+          "opacity": [
+            {"test": "datum['country'] == 'South Africa'", "value": 1},
+            {"value": 0}
+          ],
+          "tooltip": {
+            "signal": "{\"Country\": isValid(datum[\"country\"]) ? datum[\"country\"] : \"\"+datum[\"country\"], \"Total Cases\": format(datum[\"total_cases\"], \",\"), \"Total Deaths\": format(datum[\"total_deaths\"], \",\"), \"Confirmed Cases per 10,000 population\": format(datum[\"Confirmed Cases per 10,000 population\"], \".2f\"), \"Confirmed Deaths per 10,000 population\": format(datum[\"Confirmed Deaths per 10,000 population\"], \".2f\")}"
+          },
+          "description": {
+            "signal": "\"longitude: \" + (format(datum[\"longitude\"], \"\")) + \"; latitude: \" + (format(datum[\"latitude\"], \"\")) + \"; Country: \" + (isValid(datum[\"country\"]) ? datum[\"country\"] : \"\"+datum[\"country\"]) + \"; Total Cases: \" + (format(datum[\"total_cases\"], \",\")) + \"; Total Deaths: \" + (format(datum[\"total_deaths\"], \",\")) + \"; Confirmed Cases per 10,000 population: \" + (format(datum[\"Confirmed Cases per 10,000 population\"], \".2f\")) + \"; Confirmed Deaths per 10,000 population: \" + (format(datum[\"Confirmed Deaths per 10,000 population\"], \".2f\"))"
+          },
+          "x": {"field": "layer_4_layer_2_x"},
+          "y": {"field": "layer_4_layer_2_y"}
+        }
+      }
+    },
+    {
+      "name": "layer_4_layer_3_marks",
+      "type": "symbol",
+      "style": ["circle"],
+      "from": {"data": "data_3"},
+      "encode": {
+        "update": {
+          "opacity": {"value": 0.7},
+          "fill": {
+            "scale": "color",
+            "field": "Confirmed Deaths per 10,000 population"
+          },
+          "tooltip": {
+            "signal": "{\"Country\": isValid(datum[\"country\"]) ? datum[\"country\"] : \"\"+datum[\"country\"], \"Total Cases\": format(datum[\"total_cases\"], \",\"), \"Total Deaths\": format(datum[\"total_deaths\"], \",\"), \"Confirmed Cases per 10,000 population\": format(datum[\"Confirmed Cases per 10,000 population\"], \".2f\"), \"Confirmed Deaths per 10,000 population\": format(datum[\"Confirmed Deaths per 10,000 population\"], \".2f\")}"
+          },
+          "ariaRoleDescription": {"value": "circle"},
+          "description": {
+            "signal": "\"longitude: \" + (format(datum[\"longitude\"], \"\")) + \"; latitude: \" + (format(datum[\"latitude\"], \"\")) + \"; Confirmed Cases per 10,000 population: \" + (format(datum[\"Confirmed Cases per 10,000 population\"], \"\")) + \"; Confirmed Deaths per 10,000 population: \" + (format(datum[\"Confirmed Deaths per 10,000 population\"], \"\")) + \"; Country: \" + (isValid(datum[\"country\"]) ? datum[\"country\"] : \"\"+datum[\"country\"]) + \"; Total Cases: \" + (format(datum[\"total_cases\"], \",\")) + \"; Total Deaths: \" + (format(datum[\"total_deaths\"], \",\"))"
+          },
+          "x": {"field": "layer_4_layer_3_x"},
+          "y": {"field": "layer_4_layer_3_y"},
+          "size": {
+            "scale": "size",
+            "field": "Confirmed Cases per 10,000 population"
+          },
+          "shape": {"value": "circle"}
+        }
+      }
+    },
+    {
+      "name": "layer_4_layer_4_marks",
+      "type": "rule",
+      "style": ["rule"],
+      "from": {"data": "data_4"},
+      "encode": {
+        "update": {
+          "stroke": {"value": "black"},
+          "description": {
+            "signal": "\"longitude: \" + (format(datum[\"longitude\"], \"\")) + \"; latitude: \" + (format(datum[\"latitude\"], \"\"))"
+          },
+          "x": {"value": 200},
+          "x2": {"value": 222},
+          "y": {"value": 290},
+          "y2": {"value": 282}
+        }
+      }
+    },
+    {
+      "name": "layer_4_layer_5_marks",
+      "type": "rule",
+      "style": ["rule"],
+      "from": {"data": "data_5"},
+      "encode": {
+        "update": {
+          "stroke": {"value": "black"},
+          "description": {
+            "signal": "\"longitude: \" + (format(datum[\"longitude\"], \"\")) + \"; latitude: \" + (format(datum[\"latitude\"], \"\"))"
+          },
+          "x": {"value": 470},
+          "x2": {"value": 455},
+          "y": {"value": 360},
+          "y2": {"value": 350}
+        }
+      }
+    },
+    {
+      "name": "layer_4_layer_6_marks",
+      "type": "rule",
+      "style": ["rule"],
+      "from": {"data": "data_6"},
+      "encode": {
+        "update": {
+          "stroke": {"value": "black"},
+          "description": {
+            "signal": "\"longitude: \" + (format(datum[\"longitude\"], \"\")) + \"; latitude: \" + (format(datum[\"latitude\"], \"\"))"
+          },
+          "x": {"value": 690},
+          "x2": {"value": 677},
+          "y": {"value": 210},
+          "y2": {"value": 210}
+        }
+      }
+    }
+  ],
+  "scales": [
+    {
+      "name": "color",
+      "type": "linear",
+      "domain": [1, 12],
+      "range": {"scheme": "reds"},
+      "interpolate": "hcl",
+      "zero": false
+    },
+    {
+      "name": "size",
+      "type": "linear",
+      "domain": [0, 300],
+      "range": [0, 361],
+      "zero": true
+    }
+  ],
+  "legends": [
+    {
+      "title": ["Confirmed Deaths", "Per 10,000 Population"],
+      "titlePadding": 8,
+      "fill": "color",
+      "gradientLength": {"signal": "clamp(height, 64, 200)"},
+      "encode": {"gradient": {"update": {"opacity": {"value": 0.7}}}}
+    },
+    {
+      "title": ["Confirmed Cases", "Per 10,000 Population"],
+      "titlePadding": 8,
+      "size": "size",
+      "symbolType": "circle",
+      "encode": {
+        "symbols": {
+          "update": {
+            "fill": {"value": "black"},
+            "fillOpacity": {"value": 0.7},
+            "opacity": {"value": 0.7},
+            "stroke": {"value": "transparent"}
+          }
+        }
+      }
+    }
+  ],
+  "config": {
+    "mark": {"font": "Montserrat"},
+    "axis": {"labelFont": "Montserrat", "titleFont": "Montserrat"},
+    "legend": {
+      "labelFont": "Montserrat",
+      "titleFont": "Montserrat",
+      "titleFontSize": 13
+    },
+    "style": {"group-title": {"font": "Montserrat", "fontSize": 16}},
+    "title": {"subtitleFont": "Montserrat"}
+  }
+}
