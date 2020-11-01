@@ -1,0 +1,366 @@
+{
+  "$schema": "https://vega.github.io/schema/vega/v5.json",
+  "description": "Covid-19 Daily Deaths in the Top 5 Countries",
+  "background": "#f2f2f2",
+  "padding": 5,
+  "width": 550,
+  "height": 300,
+  "title": {
+    "text": "Covid-19 Daily Deaths in the Top 5 Countries",
+    "frame": "group"
+  },
+  "style": "cell",
+  "data": [
+    {
+      "name": "hover_store",
+      "values": [
+        {
+          "unit": "layer_0",
+          "fields": [{"type": "E", "field": "Country"}],
+          "values": ["India"]
+        }
+      ]
+    },
+    {
+      "name": "source_0",
+      "url": "https://raw.githubusercontent.com/prash21/FIT3179-Visualization-2/main/data/DailyCases.csv",
+      "format": {"type": "csv", "parse": {"Date": "date"}, "delimiter": ","}
+    },
+    {
+      "name": "data_0",
+      "source": "source_0",
+      "transform": [
+        {
+          "type": "aggregate",
+          "groupby": ["Country"],
+          "ops": ["max", "argmax"],
+          "fields": ["Date", "Date"],
+          "as": ["max_Date", "argmax_Date"]
+        },
+        {
+          "type": "filter",
+          "expr": "(isDate(datum[\"max_Date\"]) || (isValid(datum[\"max_Date\"]) && isFinite(+datum[\"max_Date\"]))) && isValid(datum[\"argmax_Date\"][\"NewDeaths\"]) && isFinite(+datum[\"argmax_Date\"][\"NewDeaths\"])"
+        }
+      ]
+    }
+  ],
+  "signals": [
+    {
+      "name": "unit",
+      "value": {},
+      "on": [
+        {"events": "mousemove", "update": "isTuple(group()) ? group() : unit"}
+      ]
+    },
+    {
+      "name": "hover",
+      "update": "vlSelectionResolve(\"hover_store\", \"union\")"
+    },
+    {
+      "name": "hover_tuple",
+      "on": [
+        {
+          "events": [{"source": "scope", "type": "mouseover"}],
+          "update": "datum && item().mark.marktype !== 'group' ? {unit: \"layer_0\", fields: hover_tuple_fields, values: [(item().isVoronoi ? datum.datum : datum)[\"Country\"]]} : null",
+          "force": true
+        },
+        {"events": [{"source": "scope", "type": "dblclick"}], "update": "null"}
+      ]
+    },
+    {
+      "name": "hover_tuple_fields",
+      "value": [{"type": "E", "field": "Country"}]
+    },
+    {
+      "name": "hover_modify",
+      "on": [
+        {
+          "events": {"signal": "hover_tuple"},
+          "update": "modify(\"hover_store\", hover_tuple, true)"
+        }
+      ]
+    }
+  ],
+  "marks": [
+    {
+      "name": "layer_0_pathgroup",
+      "type": "group",
+      "from": {
+        "facet": {
+          "name": "faceted_path_layer_0_main",
+          "data": "source_0",
+          "groupby": ["Country"]
+        }
+      },
+      "encode": {
+        "update": {
+          "width": {"field": {"group": "width"}},
+          "height": {"field": {"group": "height"}}
+        }
+      },
+      "marks": [
+        {
+          "name": "layer_0_marks",
+          "type": "line",
+          "style": ["line"],
+          "sort": {"field": "datum[\"Date\"]"},
+          "interactive": true,
+          "from": {"data": "faceted_path_layer_0_main"},
+          "encode": {
+            "update": {
+              "stroke": {"value": "transparent"},
+              "strokeWidth": {"value": 8},
+              "opacity": [
+                {
+                  "test": "!(length(data(\"hover_store\"))) || (vlSelectionTest(\"hover_store\", datum))",
+                  "value": 1
+                },
+                {"value": 0.2}
+              ],
+              "description": {
+                "signal": "\"Date: \" + (timeFormat(datum[\"Date\"], '%b %d, %Y')) + \"; Total Daily Deaths: \" + (format(datum[\"NewDeaths\"], \"\")) + \"; Country: \" + (isValid(datum[\"Country\"]) ? datum[\"Country\"] : \"\"+datum[\"Country\"])"
+              },
+              "x": {"scale": "x", "field": "Date"},
+              "y": {"scale": "y", "field": "NewDeaths"},
+              "defined": {
+                "signal": "isValid(datum[\"Date\"]) && isFinite(+datum[\"Date\"]) && isValid(datum[\"NewDeaths\"]) && isFinite(+datum[\"NewDeaths\"])"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "layer_1_pathgroup",
+      "type": "group",
+      "from": {
+        "facet": {
+          "name": "faceted_path_layer_1_main",
+          "data": "source_0",
+          "groupby": ["Country"]
+        }
+      },
+      "encode": {
+        "update": {
+          "width": {"field": {"group": "width"}},
+          "height": {"field": {"group": "height"}}
+        }
+      },
+      "marks": [
+        {
+          "name": "layer_1_marks",
+          "type": "line",
+          "style": ["line"],
+          "sort": {"field": "datum[\"Date\"]"},
+          "interactive": false,
+          "from": {"data": "faceted_path_layer_1_main"},
+          "encode": {
+            "update": {
+              "stroke": [
+                {
+                  "test": "!(length(data(\"hover_store\"))) || (vlSelectionTest(\"hover_store\", datum))",
+                  "scale": "color",
+                  "field": "Country"
+                },
+                {"value": "grey"}
+              ],
+              "opacity": [
+                {
+                  "test": "!(length(data(\"hover_store\"))) || (vlSelectionTest(\"hover_store\", datum))",
+                  "value": 1
+                },
+                {"value": 0.2}
+              ],
+              "description": {
+                "signal": "\"Date: \" + (timeFormat(datum[\"Date\"], '%b %d, %Y')) + \"; Total Daily Deaths: \" + (format(datum[\"NewDeaths\"], \"\")) + \"; Country: \" + (isValid(datum[\"Country\"]) ? datum[\"Country\"] : \"\"+datum[\"Country\"])"
+              },
+              "x": {"scale": "x", "field": "Date"},
+              "y": {"scale": "y", "field": "NewDeaths"},
+              "defined": {
+                "signal": "isValid(datum[\"Date\"]) && isFinite(+datum[\"Date\"]) && isValid(datum[\"NewDeaths\"]) && isFinite(+datum[\"NewDeaths\"])"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "layer_2_layer_0_marks",
+      "type": "symbol",
+      "style": ["circle"],
+      "interactive": false,
+      "from": {"data": "data_0"},
+      "encode": {
+        "update": {
+          "fill": [
+            {
+              "test": "!(length(data(\"hover_store\"))) || (vlSelectionTest(\"hover_store\", datum))",
+              "scale": "color",
+              "field": "Country"
+            },
+            {"value": "grey"}
+          ],
+          "opacity": [
+            {
+              "test": "!(length(data(\"hover_store\"))) || (vlSelectionTest(\"hover_store\", datum))",
+              "value": 1
+            },
+            {"value": 0.2}
+          ],
+          "ariaRoleDescription": {"value": "circle"},
+          "description": {
+            "signal": "\"Date: \" + (timeFormat(datum[\"max_Date\"], '%b %d, %Y')) + \"; Total Daily Deaths: \" + (format(datum[\"argmax_Date\"][\"NewDeaths\"], \"\")) + \"; Country: \" + (isValid(datum[\"Country\"]) ? datum[\"Country\"] : \"\"+datum[\"Country\"])"
+          },
+          "x": {"scale": "x", "field": "max_Date"},
+          "y": [
+            {
+              "test": "!isValid(datum[\"argmax_Date\"][\"NewDeaths\"]) || !isFinite(+datum[\"argmax_Date\"][\"NewDeaths\"])",
+              "field": {"group": "height"}
+            },
+            {"scale": "y", "field": "argmax_Date[\"NewDeaths\"]"}
+          ],
+          "shape": {"value": "circle"}
+        }
+      }
+    },
+    {
+      "name": "layer_2_layer_1_marks",
+      "type": "text",
+      "style": ["text"],
+      "interactive": false,
+      "from": {"data": "data_0"},
+      "encode": {
+        "update": {
+          "align": {"value": "left"},
+          "dx": {"value": 5},
+          "fill": [
+            {
+              "test": "!(length(data(\"hover_store\"))) || (vlSelectionTest(\"hover_store\", datum))",
+              "scale": "color",
+              "field": "Country"
+            },
+            {"value": "grey"}
+          ],
+          "opacity": [
+            {
+              "test": "!(length(data(\"hover_store\"))) || (vlSelectionTest(\"hover_store\", datum))",
+              "value": 1
+            },
+            {"value": 0.2}
+          ],
+          "description": {
+            "signal": "\"Date: \" + (timeFormat(datum[\"max_Date\"], '%b %d, %Y')) + \"; Total Daily Deaths: \" + (format(datum[\"argmax_Date\"][\"NewDeaths\"], \"\")) + \"; Country: \" + (isValid(datum[\"Country\"]) ? datum[\"Country\"] : \"\"+datum[\"Country\"])"
+          },
+          "x": {"scale": "x", "field": "max_Date"},
+          "y": [
+            {
+              "test": "!isValid(datum[\"argmax_Date\"][\"NewDeaths\"]) || !isFinite(+datum[\"argmax_Date\"][\"NewDeaths\"])",
+              "field": {"group": "height"}
+            },
+            {"scale": "y", "field": "argmax_Date[\"NewDeaths\"]"}
+          ],
+          "text": {
+            "signal": "isValid(datum[\"Country\"]) ? datum[\"Country\"] : \"\"+datum[\"Country\"]"
+          },
+          "baseline": {"value": "middle"}
+        }
+      }
+    }
+  ],
+  "scales": [
+    {
+      "name": "x",
+      "type": "time",
+      "domain": {
+        "fields": [
+          {"data": "source_0", "field": "Date"},
+          {"data": "data_0", "field": "max_Date"}
+        ]
+      },
+      "range": [0, {"signal": "width"}]
+    },
+    {
+      "name": "y",
+      "type": "linear",
+      "domain": [1, 5000],
+      "range": [{"signal": "height"}, 0],
+      "nice": true,
+      "zero": false
+    },
+    {
+      "name": "color",
+      "type": "ordinal",
+      "domain": {
+        "fields": [
+          {"data": "source_0", "field": "Country"},
+          {"data": "data_0", "field": "Country"}
+        ],
+        "sort": true
+      },
+      "range": {"scheme": "category10"}
+    }
+  ],
+  "axes": [
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "gridScale": "y",
+      "grid": true,
+      "tickCount": {"signal": "ceil(width/40)"},
+      "domain": false,
+      "labels": false,
+      "aria": false,
+      "maxExtent": 0,
+      "minExtent": 0,
+      "ticks": false,
+      "zindex": 0
+    },
+    {
+      "scale": "y",
+      "orient": "left",
+      "gridScale": "x",
+      "grid": true,
+      "tickCount": {"signal": "ceil(height/40)"},
+      "domain": false,
+      "labels": false,
+      "aria": false,
+      "maxExtent": 0,
+      "minExtent": 0,
+      "ticks": false,
+      "zindex": 0
+    },
+    {
+      "scale": "x",
+      "orient": "bottom",
+      "grid": false,
+      "title": "Date",
+      "labelFlush": true,
+      "labelOverlap": true,
+      "tickCount": {"signal": "ceil(width/40)"},
+      "zindex": 0
+    },
+    {
+      "scale": "y",
+      "orient": "left",
+      "grid": false,
+      "title": "Total Daily Deaths",
+      "labelOverlap": true,
+      "tickCount": {"signal": "ceil(height/40)"},
+      "zindex": 0
+    }
+  ],
+  "config": {
+    "mark": {"font": "Montserrat"},
+    "axis": {"labelFont": "Montserrat", "titleFont": "Montserrat"},
+    "legend": {
+      "labelFont": "Montserrat",
+      "titleFont": "Montserrat",
+      "titleFontSize": 13
+    },
+    "style": {
+      "cell": {"stroke": null},
+      "group-title": {"font": "Montserrat", "fontSize": 16}
+    },
+    "title": {"subtitleFont": "Montserrat"}
+  }
+}
